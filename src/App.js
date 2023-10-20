@@ -1,25 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
 
-function App() {
+import useQuery from "./useQuery";
+
+import "./styles.css";
+
+const fetchData = async () => {
+  // Replace this with your actual API call logic
+  const response = await fetch("https://jsonplaceholder.typicode.com/todos");
+  if (!response.ok) {
+    throw new Error("Error fetching data");
+  }
+  return response.json();
+};
+
+export default function App() {
+  const { isLoading, error, data } = useQuery("key", fetchData);
+
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error fetching</p>;
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {data ? (
+        <ul>
+          {data.map((item) => (
+            <li key={item.id}>
+              <p>
+                {item.title} - {item.completed ? "Completed" : "Not Completed"}
+              </p>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No data</p>
+      )}
     </div>
   );
 }
-
-export default App;
